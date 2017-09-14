@@ -3,10 +3,11 @@ contract MultiSigHealthWallet {
 
 
   mapping (uint => Transaction) public m_txs;
+  // confirmations[transaction id][address of owners] = true or false
+  mapping (uint => mapping (address => bool)) public confirmations;
   uint public m_txCount;
   address[] public owners;
   uint public threshold;
-  uint public  m_confirmations;
 
   struct Transaction {
       address destination;
@@ -47,23 +48,26 @@ contract MultiSigHealthWallet {
 
   function ConfirmTransaction(uint txID) ownerExists(msg.sender) {
     Confirmation(msg.sender, txID);  //Send notifications to all the owners that a transaction has been submitted, pls take actions
-    m_confirmations = m_confirmations + 1;
-    execute(txID); // start execution 1
+    confirmations[txID][msg.sender] = true;
+    execute(txID);
   }
 
-  function isConfirmed() returns (bool)
+  function isConfirmed(uint txID) internal returns (bool)
   {
-    if (m_confirmations <= 1) {
-      return true;
+    uint count= 0;
+    for (uint i = 0; i < owners.length; i++)
+    {
+      if (confirmations[txID][owners[i]]) count ++;
+      if (count == threshold) return true;
     }
+    return false;
   }
 
   function execute(uint txID) {
-    if (isConfirmed())
+    if (isConfirmed(txID))
     {
       Transaction t = m_txs[txID];
       t.executed = true;
-      m_confirmations = 0; //reset this global for the time being
       Approved("ipfs-link of data");
     }
   }

@@ -8,11 +8,30 @@ var walletString = '[{"constant":true,"inputs":[{"name":"","type":"uint256"}],"n
 var walletABI = JSON.parse(walletString);
 var multiSigAddress = "0xff7f19501d30171b1e7f9922c4b51c5c9ca9ee22";
 var walletContract = web3.eth.contract(walletABI).at(multiSigAddress);
+
+var patientString = '[{"constant":false,"inputs":[{"name":"ipfsHash","type":"bytes32"}],"name":"storeEMRData","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"ipfsHash","type":"bytes32"}],"name":"storePrescriptionData","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"ipfsHash","type":"bytes32"}],"name":"storeGearData","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getPrescriptionData","outputs":[{"name":"","type":"bytes32"}],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"}]';
+var patientABI = JSON.parse(patientString);
+var patientAddr = '';
+var patientContract = web3.eth.contract(patientABI).at(patientAddr);
+
+
 console.log(web3.version.api);
 console.log(web3.isConnected());
 console.log(web3.version.node);
-var event = walletContract.NewTransaction({}, function (error, result) {
 
+
+
+ //I have preloaded the sample files on ipfs server, so we can directly store the
+ // links directly.
+ //QmY9Si4SRHyTssMXN74P2SJLqDEKt1kazbhzpfuVNPA3EY   hash of prescription.gif
+ //QmUhQKQ7qzpZaeeT5apEjhuyNNBfAcGpkXxStfTcLsryhc   hash of EMR.gif
+ //QmUhQKQ7qzpZaeeT5apEjhuyNNBfAcGpkXxStfTcLsryhc   hash of gear.jpg
+
+
+  //store data prescription data.
+patientContract.storePrescriptionData.sendTransaction("QmY9Si4SRHyTssMXN74P2SJLqDEKt1kazbhzpfuVNPA3EY", from : web3.eth.accounts[0], gas: 2100000);
+
+var event = walletContract.NewTransaction({}, function (error, result) {
   if (!error) {
     console.log(result);
     console.log("New Transaction pending for your approval, Enter yes or no");

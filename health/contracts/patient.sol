@@ -1,17 +1,30 @@
 pragma solidity ^0.4.0;
 contract patient
 {
-    string public p  = "my Prescription data";
-    // Here we can have ipfs links in future
+      address owner;
+      bytes32 private prescriptionHash;
+      bytes32 private gearHash;
+      bytes32 private EMRhash;
 
-    function senddata()  returns (string)
+    function patient()
     {
-        return p;
+      owner = msg.sender;
     }
 
-    //fallback function
-    function ()
-    {
-
+    function storePrescriptionData(bytes32 ipfsHash) returns (bool) {
+         prescriptionHash = ipfsHash;
     }
+    function storeGearData(bytes32 ipfsHash)  returns (bool) {
+         gearHash = ipfsHash;
+    }
+
+    function storeEMRData(bytes32 ipfsHash)  returns (bool) {
+         EMRhash = ipfsHash;
+    }
+
+    function getPrescriptionData() returns (bytes32)
+    {
+        return prescriptionHash;
+    }
+
 }
